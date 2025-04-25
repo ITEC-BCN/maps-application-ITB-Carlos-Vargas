@@ -33,7 +33,7 @@ import com.example.mapsapp.viewmodels.PermissionViewModel
 
 
 @Composable
-fun PermissionsScreen(){
+fun PermissionsScreen(navigateToNext: () -> Unit){
     val activity = LocalContext.current
     val viewModel = PermissionViewModel()
 
