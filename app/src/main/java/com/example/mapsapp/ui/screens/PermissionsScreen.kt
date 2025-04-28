@@ -39,8 +39,7 @@ fun PermissionsScreen(navigateToNext: () -> Unit){
 
     val permissions = listOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.CAMERA,
-        Manifest.permission.RECORD_AUDIO
+        Manifest.permission.CAMERA
     )
 
     val permissionsStatus = viewModel.permissionsStatus.value
@@ -103,12 +102,15 @@ fun PermissionsScreen(navigateToNext: () -> Unit){
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", activity!!.packageName, null)
+                    data = Uri.fromParts("package", activity.packageName, null)
                 }
-                activity!!.startActivity(intent)
+                activity.startActivity(intent)
             }) {
                 Text("Go to settings")
             }
         }
+        /*if (){
+
+        }*/
     }
 }

@@ -15,4 +15,5 @@ sealed class Destination {
 
     @Serializable
     object List: Destination()
+
 }

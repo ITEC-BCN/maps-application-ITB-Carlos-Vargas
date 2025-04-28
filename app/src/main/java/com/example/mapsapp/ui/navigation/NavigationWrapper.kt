@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mapsapp.ui.drawer.DrawerScreens
 import com.example.mapsapp.ui.screens.MapScreen
 import com.example.mapsapp.ui.screens.PermissionsScreen
 
@@ -15,7 +16,7 @@ fun NavigationWrapper(){
             PermissionsScreen{  navController.navigate(Destination.Map) }
         }
         composable<Destination.Map> {
-            MapScreen()
+            DrawerScreens()
             }
         }
 }
