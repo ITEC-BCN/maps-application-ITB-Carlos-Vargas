@@ -1,6 +1,5 @@
 package com.example.mapsapp.ui.drawer
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
@@ -20,8 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.example.mapsapp.ui.navigation.NavigationDrawer
 import kotlinx.coroutines.launch
 
 
@@ -33,8 +32,9 @@ fun DrawerScreens() {
     val scope = rememberCoroutineScope()
     var selectedItemIndex by remember { mutableStateOf(0) }
     ModalNavigationDrawer(
+        gesturesEnabled = false,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet() {
                 DrawerItem.entries.forEachIndexed { index, drawerItem ->
                     NavigationDrawerItem(
                         icon = {Icon(imageVector = drawerItem.icon, contentDescription = drawerItem.text)},
@@ -67,7 +67,8 @@ fun DrawerScreens() {
         }
 
     }
-
+    //para que el drawer no se abra con deslizar los dedos
+/*geturesEnabled = false*/
 
 
 }

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.utils.PermissionStatus
 import com.example.mapsapp.viewmodels.PermissionViewModel
 
@@ -35,7 +36,7 @@ import com.example.mapsapp.viewmodels.PermissionViewModel
 @Composable
 fun PermissionsScreen(navigateToNext: () -> Unit){
     val activity = LocalContext.current
-    val viewModel = PermissionViewModel()
+    val viewModel = viewModel<PermissionViewModel>()
 
     val permissions = listOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -45,6 +46,10 @@ fun PermissionsScreen(navigateToNext: () -> Unit){
     val permissionsStatus = viewModel.permissionsStatus.value
     var alreadyRequested by remember { mutableStateOf(false) }
 
+    val allGranted = permissions.all { permissionsStatus[it] == PermissionStatus.Granted }
+    if (allGranted) {
+        navigateToNext()
+    }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { result: Map<String, Boolean> ->
@@ -64,6 +69,7 @@ fun PermissionsScreen(navigateToNext: () -> Unit){
             alreadyRequested = true
             launcher.launch(permissions.toTypedArray())
         }
+
     }
 
     Column(
@@ -102,15 +108,12 @@ fun PermissionsScreen(navigateToNext: () -> Unit){
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", activity.packageName, null)
+                    data = Uri.fromParts("package", activity!!.packageName, null)
                 }
-                activity.startActivity(intent)
+                activity!!.startActivity(intent)
             }) {
                 Text("Go to settings")
             }
         }
-        /*if (){
-
-        }*/
     }
 }
