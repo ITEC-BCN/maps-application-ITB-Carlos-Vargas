@@ -26,8 +26,8 @@ class SupabaseViewModel: ViewModel() {
     }*/
     val database = MyApp.database
 
-    private val _studentsList = MutableLiveData<List<Marcador>>()
-    val studentsList = _studentsList
+    private val _marcadorList = MutableLiveData<List<Marcador>>()
+    val marcadorList = _marcadorList
 
     private var _selectedMarcador: Marcador? = null
 
@@ -37,11 +37,23 @@ class SupabaseViewModel: ViewModel() {
     private val _studentMark = MutableLiveData<String>()
     val studentMark = _studentMark
 
+    private val _marcadorTitle = MutableLiveData<String>()
+    val marcadorTitle = _marcadorTitle
+
+    private val _marcadorAltitud= MutableLiveData<Double>()
+    val marcadorAltitud = _marcadorAltitud
+
+    private val _marcadorLongitd = MutableLiveData<Double>()
+    val marcadorLongitud = _marcadorLongitd
+
+    private val _marcadorDescripcion = MutableLiveData<String>()
+    val marcadorDescripcion = _marcadorDescripcion
+
     fun getAllMarcadors() {
         CoroutineScope(Dispatchers.IO).launch {
             val databaseMarcadors = database.getAllMarcardor()
             withContext(Dispatchers.Main) {
-                _studentsList.value = databaseMarcadors
+                _marcadorList.value = databaseMarcadors
             }
         }
     }
