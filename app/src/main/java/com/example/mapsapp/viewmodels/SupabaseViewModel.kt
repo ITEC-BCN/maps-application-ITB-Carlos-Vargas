@@ -10,93 +10,86 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SupabaseViewModel: ViewModel() {
-    /*val database = MyApp.database
-    private val _studentName = MutableLiveData<String>()
-    val studentName = _studentName
-    private val _studentMark = MutableLiveData<String>()
-    val studentMark = _studentMark
 
-
-    fun insertNewMarcador(title: String, longitud: Double, altitud : Double, descripcion: String) {
-        val newMarcador = Marcador(title = title, longitud = longitud, altitud = altitud, descripcion = descripcion )
-        CoroutineScope(Dispatchers.IO).launch {
-            database.insertMarcardor(newMarcador)
-            getAllMarcardor()
-        }
-    }*/
-    val database = MyApp.database
+    val database = MyApp.database  // Asegúrate de que MyApp.database esté conectado a Supabase
 
     private val _marcadorList = MutableLiveData<List<Marcador>>()
     val marcadorList = _marcadorList
 
     private var _selectedMarcador: Marcador? = null
 
-    private val _studentName = MutableLiveData<String>()
-    val studentName = _studentName
-
-    private val _studentMark = MutableLiveData<String>()
-    val studentMark = _studentMark
-
     private val _marcadorTitle = MutableLiveData<String>()
     val marcadorTitle = _marcadorTitle
 
-    private val _marcadorAltitud= MutableLiveData<Double>()
+    private val _marcadorAltitud = MutableLiveData<Double>()
     val marcadorAltitud = _marcadorAltitud
 
-    private val _marcadorLongitd = MutableLiveData<Double>()
-    val marcadorLongitud = _marcadorLongitd
+    private val _marcadorLongitud = MutableLiveData<Double>()
+    val marcadorLongitud = _marcadorLongitud
 
     private val _marcadorDescripcion = MutableLiveData<String>()
     val marcadorDescripcion = _marcadorDescripcion
 
     fun getAllMarcadors() {
         CoroutineScope(Dispatchers.IO).launch {
-            val databaseMarcadors = database.getAllMarcardor()
+            val marcadores = database.getAllMarcardor()
             withContext(Dispatchers.Main) {
-                _marcadorList.value = databaseMarcadors
+                _marcadorList.value = marcadores
             }
         }
     }
 
-    fun insertNewMarcador(title: String, longitud: Double, altitud : Double, descripcion: String) {
-        val newMarcador = Marcador(title = title, longitud = longitud, altitud = altitud, descripcion = descripcion )
+    fun insertNewMarcador(title: String, longitud: Double, altitud: Double, descripcion: String) {
+        val newMarcador = Marcador(title = title, longitud = longitud, altitud = altitud, descripcion = descripcion)
         CoroutineScope(Dispatchers.IO).launch {
             database.insertMarcardor(newMarcador)
             getAllMarcadors()
         }
     }
 
-    fun updateMarcador(id: String, name: String, mark: String){
+    fun updateMarcador(id: Int, title: String, descripcion: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            database.updateMarcardor(id, name, mark.toDouble())
-        }
-    }
-
-    fun deleteMarcador(id: String){
-        CoroutineScope(Dispatchers.IO).launch {
-            database.deleteMarcardor(id)
+            database.updateMarcardor(id, title, descripcion)
             getAllMarcadors()
         }
     }
 
-    fun getMarcador(id: String){
-        if(_selectedMarcador == null){
+    fun deleteMarcador(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            database.deleteMarcardor(id)
+            getAllMarcadors()
+        }
+
+    }
+
+    fun getMarcador(id: Int) {
+        if (_selectedMarcador == null) {
             CoroutineScope(Dispatchers.IO).launch {
-                val student = database.getMarcardor(id)
+                val marcador = database.getMarcardor(id)
                 withContext(Dispatchers.Main) {
-                    _selectedMarcador = student
-                    _studentName.value = student.name
-                    _studentMark.value = student.mark.toString()
+                    _selectedMarcador = marcador
+                    _marcadorTitle.value = marcador.title
+                    _marcadorAltitud.value = marcador.altitud
+                    _marcadorLongitud.value = marcador.longitud
+                    _marcadorDescripcion.value = marcador.descripcion
                 }
             }
         }
     }
 
-    fun editMarcadorName(name: String) {
-        _studentName.value = name
+    fun editMarcadorTitle(title: String) {
+        _marcadorTitle.value = title
     }
 
-    fun editMarcadorMark(mark: String) {
-        _studentMark.value = mark
+    fun editMarcadorAltitud(altitud: Double) {
+        _marcadorAltitud.value = altitud
+    }
+
+    fun editMarcadorLongitud(longitud: Double) {
+        _marcadorLongitud.value = longitud
+    }
+
+    fun editMarcadorDescripcion(descripcion: String) {
+        _marcadorDescripcion.value = descripcion
     }
 }

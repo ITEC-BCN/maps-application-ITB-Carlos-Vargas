@@ -5,7 +5,7 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 
-class MySupabaseClient {
+class MySupabaseClient() {
 
     lateinit var client: SupabaseClient
 
@@ -16,39 +16,40 @@ class MySupabaseClient {
         ) {
             install(Postgrest)
         }
+
     }
 
     suspend fun getAllMarcardor(): List<Marcador> {
         return client.from("Marcardores").select().decodeList<Marcador>()
     }
 
-    suspend fun getMarcardor(title: String): Marcador{
+    suspend fun getMarcardor(id: Int): Marcador{
         return client.from("Marcardores").select {
             filter {
-                eq("title", title)
+                eq("id", id)
             }
         }.decodeSingle<Marcador>()
     }
 
-    suspend fun insertMarcardor(student: Marcador){
-        client.from("Marcardores").insert(student)
+    suspend fun insertMarcardor(marcador: Marcador){
+        client.from("Marcardores").insert(marcador)
     }
 
-    suspend fun updateMarcardor( oldTitle: String, newTitle: String,snippet:String){
+    suspend fun updateMarcardor( id : Int, newTitle: String, newDescripcion:String){
         client.from("Marcardores").update({
             set("title", newTitle)
-            set("snippet", snippet)
+            set("descripcion", newDescripcion)
         }) {
             filter {
-                eq("title", oldTitle)
+                eq("id", id)
             }
         }
     }
 
-    suspend fun deleteMarcardor(title: String){
+    suspend fun deleteMarcardor(id: Int){
         client.from("Marcardores").delete{
             filter {
-                eq("title", title)
+                eq("id", id)
             }
         }
     }

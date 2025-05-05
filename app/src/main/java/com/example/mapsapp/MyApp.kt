@@ -1,13 +1,9 @@
 package com.example.mapsapp
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
+
 import com.example.mapsapp.data.MySupabaseClient
-import com.example.mapsapp.viewmodels.PermissionViewModel
+
 
 class MyApp: Application() {
     companion object {
@@ -16,8 +12,8 @@ class MyApp: Application() {
     override fun onCreate() {
         super.onCreate()
         database = MySupabaseClient(
-            supabaseUrl = "YOUR_URL",
-            supabaseKey = "YOUR_KEY"
+            supabaseUrl = "https://ojkxutdgimhcdhrpqoxu.supabase.co",
+            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qa3h1dGRnaW1oY2RocnBxb3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5MjA5NzUsImV4cCI6MjA2MTQ5Njk3NX0.Hn7WD_e7f3UhntdJuVVNiV6SjtPw4NGrd8p2isXv2UE"
         )
     }
 
