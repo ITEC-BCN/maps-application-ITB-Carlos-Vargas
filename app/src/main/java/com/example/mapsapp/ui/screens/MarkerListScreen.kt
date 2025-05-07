@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -46,7 +47,10 @@ fun MarkerListScreen( contentPadding: PaddingValues){
 
 
     Column(
-        Modifier.fillMaxSize()
+        Modifier.fillMaxSize().padding(contentPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+
     ) {
 
         Text(
@@ -54,7 +58,8 @@ fun MarkerListScreen( contentPadding: PaddingValues){
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.White
         )
         LazyColumn(
             Modifier
@@ -83,7 +88,7 @@ fun MarkerListScreen( contentPadding: PaddingValues){
                         Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
                     }
                 }) {
-
+                    StudentItem(student)
                 }
             }
         }
@@ -91,7 +96,7 @@ fun MarkerListScreen( contentPadding: PaddingValues){
 }
 
 @Composable
-fun StudentItem(student: Marcador, navigateToDetail: (String) -> Unit) {
+fun StudentItem(student: Marcador) {
     Box(
         modifier = Modifier
             .fillMaxWidth().background(Color.LightGray).border(width = 2.dp, Color.DarkGray)
@@ -101,8 +106,8 @@ fun StudentItem(student: Marcador, navigateToDetail: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(student.title, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-            Text(text = "Mark: ${student.descripcion}")
+            Text(student.title, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text(text = "Mark: ${student.descripcion}",  color = Color.White)
         }
     }
 }

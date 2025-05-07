@@ -20,11 +20,11 @@ class MySupabaseClient() {
     }
 
     suspend fun getAllMarcardor(): List<Marcador> {
-        return client.from("Marcardores").select().decodeList<Marcador>()
+        return client.from("Marcadores").select().decodeList<Marcador>()
     }
 
     suspend fun getMarcardor(id: Int): Marcador{
-        return client.from("Marcardores").select {
+        return client.from("Marcadores").select {
             filter {
                 eq("id", id)
             }
@@ -32,11 +32,11 @@ class MySupabaseClient() {
     }
 
     suspend fun insertMarcardor(marcador: Marcador){
-        client.from("Marcardores").insert(marcador)
+        client.from("Marcadores").insert(marcador)
     }
 
     suspend fun updateMarcardor( id : Int, newTitle: String, newDescripcion:String){
-        client.from("Marcardores").update({
+        client.from("Marcadores").update({
             set("title", newTitle)
             set("descripcion", newDescripcion)
         }) {
@@ -47,7 +47,7 @@ class MySupabaseClient() {
     }
 
     suspend fun deleteMarcardor(id: Int){
-        client.from("Marcardores").delete{
+        client.from("Marcadores").delete{
             filter {
                 eq("id", id)
             }
