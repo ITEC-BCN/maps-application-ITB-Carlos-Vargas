@@ -8,5 +8,6 @@ data class Marcador(
     val title :String,
     val altitud : Double,
     val longitud: Double,
-    val descripcion: String
+    val descripcion: String,
+    val imagen :String
 )

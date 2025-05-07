@@ -1,5 +1,8 @@
 package com.example.mapsapp.viewmodels
 
+import android.graphics.Bitmap
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mapsapp.MyApp
@@ -8,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 
 class SupabaseViewModel: ViewModel() {
 
@@ -38,10 +42,18 @@ class SupabaseViewModel: ViewModel() {
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun insertNewMarcador(title: String, longitud: Double, altitud: Double, descripcion: String, image: Bitmap) {
+        val stream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.PNG, 0, stream)
 
-    fun insertNewMarcador(title: String, longitud: Double, altitud: Double, descripcion: String) {
-        val newMarcador = Marcador(title = title, longitud = longitud, altitud = altitud, descripcion = descripcion)
         CoroutineScope(Dispatchers.IO).launch {
+            val imageName = database.uploadImage(stream.toByteArray())
+            val newMarcador = Marcador(title = title,
+                longitud = longitud,
+                altitud = altitud,
+                descripcion = descripcion,
+                imagen = imageName)
             database.insertMarcardor(newMarcador)
             getAllMarcadors()
         }
