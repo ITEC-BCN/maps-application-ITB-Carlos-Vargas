@@ -14,5 +14,8 @@ class MapviewModel :ViewModel() {
     private val _longitud = MutableLiveData<Double>()
     val longitud = _longitud
 
+    fun updateShowAlert(valor : Boolean){
+        showAlert.value = valor
+    }
 
 }

@@ -49,7 +49,7 @@ fun MarkerListScreen( contentPadding: PaddingValues){
     Column(
         Modifier.fillMaxSize().padding(contentPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
 
     ) {
 

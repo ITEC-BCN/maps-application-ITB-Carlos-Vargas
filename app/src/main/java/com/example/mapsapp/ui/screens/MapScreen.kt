@@ -45,7 +45,7 @@ fun MapScreen(contentPadding: PaddingValues, navigateToNext: (Double,Double) -> 
             }, onMapLongClick = {LatLng ->
                 latitude = LatLng.latitude
                 longitude = LatLng.longitude
-                showDialog = true
+                myViewModel.updateShowAlert(true)
             }){
             Marker(
                 state = MarkerState(position = itb), title = "ITB",
@@ -55,11 +55,11 @@ fun MapScreen(contentPadding: PaddingValues, navigateToNext: (Double,Double) -> 
     }
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = {  myViewModel.updateShowAlert(false) },
             text = { Text("¿Crear una marca en esta pocición?") },
             confirmButton = {
                 TextButton(onClick = {
-                    showDialog = false
+                    myViewModel.updateShowAlert(false)
                     navigateToNext(latitude!!,longitude!!)
                 }) {
                     Text("Crear")
@@ -67,7 +67,7 @@ fun MapScreen(contentPadding: PaddingValues, navigateToNext: (Double,Double) -> 
             },
             dismissButton = {
                 TextButton(onClick = {
-                    showDialog = false
+                    myViewModel.updateShowAlert(false)
 
                 }) {
                     Text("Cancelar")

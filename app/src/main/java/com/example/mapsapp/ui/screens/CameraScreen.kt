@@ -111,15 +111,3 @@ fun CameraScreen() {
     }
 }
 
-fun createImageUri(context: Context): Uri? {
-    val file = File.createTempFile("temp_image_", ".jpg", context.cacheDir).apply {
-        createNewFile()
-        deleteOnExit()
-    }
-
-    return FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.fileprovider",
-        file
-    )
-}

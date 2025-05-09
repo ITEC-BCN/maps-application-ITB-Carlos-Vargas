@@ -27,7 +27,7 @@ fun NavigationDrawer(navController: NavHostController,
         }
         composable<CreateMark> { backStrackEntry ->
             val detall = backStrackEntry.toRoute<CreateMark>()
-            CreateMarkerScreen(detall.altitud, detall.longitud)
+            CreateMarkerScreen(contentPadding ,detall.altitud, detall.longitud)
         }
     }
 }
