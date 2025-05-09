@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mapsapp.ui.screens.MapScreen
 import com.example.mapsapp.ui.screens.MarkerListScreen
+import androidx.navigation.toRoute
+import com.example.mapsapp.ui.screens.CreateMarkerScreen
 
 @Composable
 fun NavigationDrawer(navController: NavHostController,
@@ -14,10 +16,18 @@ fun NavigationDrawer(navController: NavHostController,
 ){
     NavHost(navController, Destination.Map){
         composable<Destination.Map>{
-            MapScreen(contentPadding)
+            MapScreen(
+                contentPadding,
+                navigateToNext = { altitud, longitud ->
+                navController.navigate(CreateMark(altitud,longitud))
+            })
         }
         composable<Destination.List> {
             MarkerListScreen(contentPadding)
+        }
+        composable<CreateMark> { backStrackEntry ->
+            val detall = backStrackEntry.toRoute<CreateMark>()
+            CreateMarkerScreen(detall.altitud, detall.longitud)
         }
     }
 }
