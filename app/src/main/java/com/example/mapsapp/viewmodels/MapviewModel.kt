@@ -8,6 +8,8 @@ class MapviewModel :ViewModel() {
 
     var showAlert = mutableStateOf(false)
 
+    var showLoding = mutableStateOf(false)
+
     private val _altitud = MutableLiveData<Double>()
     val altitud = _altitud
 

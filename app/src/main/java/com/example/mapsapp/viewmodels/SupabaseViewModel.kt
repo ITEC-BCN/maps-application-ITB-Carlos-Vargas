@@ -3,6 +3,7 @@ package com.example.mapsapp.viewmodels
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mapsapp.MyApp
@@ -34,26 +35,28 @@ class SupabaseViewModel: ViewModel() {
     private val _marcadorDescripcion = MutableLiveData<String>()
     val marcadorDescripcion = _marcadorDescripcion
 
+    var showAlert = mutableStateOf(false) //indicador de alerta crear mark
+
+    private val _showLoading = MutableLiveData<Boolean>(true)
+    val showLoading = _showLoading // indicador de carga marks
+
     fun getAllMarcadors() {
         CoroutineScope(Dispatchers.IO).launch {
             val marcadores = database.getAllMarcardor()
             withContext(Dispatchers.Main) {
                 _marcadorList.value = marcadores
+                _showLoading.value = false
             }
         }
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    fun insertNewMarcador(title: String, longitud: Double, altitud: Double, descripcion: String, image: Bitmap) {
+    fun insertNewMarcador(title: String, altitud: Double, longitud : Double , descripcion:String ,image: Bitmap) {
         val stream = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.PNG, 0, stream)
 
         CoroutineScope(Dispatchers.IO).launch {
             val imageName = database.uploadImage(stream.toByteArray())
-            val newMarcador = Marcador(title = title,
-                longitud = longitud,
-                altitud = altitud,
-                descripcion = descripcion,
-                imagen = imageName)
+            val newMarcador = Marcador(null, title, altitud, longitud, descripcion, imageName)
             database.insertMarcardor(newMarcador)
             getAllMarcadors()
         }
@@ -103,5 +106,8 @@ class SupabaseViewModel: ViewModel() {
 
     fun editMarcadorDescripcion(descripcion: String) {
         _marcadorDescripcion.value = descripcion
+    }
+    fun updateShowAlert(valor : Boolean){
+        showAlert.value = valor
     }
 }

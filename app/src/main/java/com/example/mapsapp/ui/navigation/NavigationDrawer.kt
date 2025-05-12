@@ -1,5 +1,7 @@
 package com.example.mapsapp.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -10,6 +12,7 @@ import com.example.mapsapp.ui.screens.MarkerListScreen
 import androidx.navigation.toRoute
 import com.example.mapsapp.ui.screens.CreateMarkerScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationDrawer(navController: NavHostController,
                      contentPadding: PaddingValues
