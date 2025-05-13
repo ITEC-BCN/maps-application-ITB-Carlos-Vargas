@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -20,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.data.Marcador
-import com.example.mapsapp.viewmodels.MapviewModel
 import com.example.mapsapp.viewmodels.SupabaseViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -30,7 +28,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun MapScreen(contentPadding: PaddingValues, navigateToNext: (Double,Double) -> Unit){
+fun MapScreen( contentPadding: PaddingValues, navigateToNext: (Double, Double) -> Unit){
     val myViewModel = viewModel<SupabaseViewModel>()
     val showDialog = myViewModel.showAlert.value
     val showLoading: Boolean by myViewModel.showLoading.observeAsState(true)
