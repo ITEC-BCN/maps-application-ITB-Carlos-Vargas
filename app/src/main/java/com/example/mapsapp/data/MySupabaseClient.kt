@@ -75,5 +75,10 @@ class MySupabaseClient{
 
     fun buildImageUrl(imageFileName: String) = "${this.supabaseUrl}/storage/v1/object/public/images/${imageFileName}"
 
+    suspend fun deleteImage(imageName: String){
+        val imgName = imageName.removePrefix("https://aobflzinjcljzqpxpcxs.supabase.co/storage/v1/object/public/images/")
+        client.storage.from("images").delete(imgName)
+    }
+
 
 }

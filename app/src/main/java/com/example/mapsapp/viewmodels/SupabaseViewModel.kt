@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mapsapp.MyApp
 import com.example.mapsapp.data.Marcador
 import kotlinx.coroutines.CoroutineScope
@@ -16,12 +17,13 @@ import java.io.ByteArrayOutputStream
 
 class SupabaseViewModel: ViewModel() {
 
-    val database = MyApp.database  // Asegúrate de que MyApp.database esté conectado a Supabase
+    private val database = MyApp.database  // Asegúrate de que MyApp.database esté conectado a Supabase
 
     private val _marcadorList = MutableLiveData<List<Marcador>>()
     val marcadorList = _marcadorList
 
-    private var _selectedMarcador: Marcador? = null
+    private val _selectedMarcador = MutableLiveData<Marcador>()
+    val selectedMarcador = _selectedMarcador
 
     private val _marcadorTitle = MutableLiveData<String>()
     val marcadorTitle = _marcadorTitle
@@ -39,6 +41,8 @@ class SupabaseViewModel: ViewModel() {
 
     private val _showLoading = MutableLiveData<Boolean>(true)
     val showLoading = _showLoading // indicador de carga marks
+
+    val isFavorito = mutableStateOf(false)
 
     fun getAllMarcadors() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -69,27 +73,29 @@ class SupabaseViewModel: ViewModel() {
         }
     }
 
-    fun deleteMarcador(id: Int) {
+    fun deleteStudent(id: Int, image: String){
         CoroutineScope(Dispatchers.IO).launch {
+            database.deleteImage(image)
             database.deleteMarcardor(id)
             getAllMarcadors()
         }
-
     }
 
+
     fun getMarcador(id: Int) {
-        if (_selectedMarcador == null) {
+
             CoroutineScope(Dispatchers.IO).launch {
                 val marcador = database.getMarcardor(id)
                 withContext(Dispatchers.Main) {
-                    _selectedMarcador = marcador
+                    _selectedMarcador.value = marcador
                     _marcadorTitle.value = marcador.title
                     _marcadorAltitud.value = marcador.altitud
                     _marcadorLongitud.value = marcador.longitud
                     _marcadorDescripcion.value = marcador.descripcion
+                    _showLoading.value = false
                 }
             }
-        }
+
     }
 
     fun editMarcadorTitle(title: String) {
@@ -110,4 +116,5 @@ class SupabaseViewModel: ViewModel() {
     fun updateShowAlert(valor : Boolean){
         showAlert.value = valor
     }
+
 }

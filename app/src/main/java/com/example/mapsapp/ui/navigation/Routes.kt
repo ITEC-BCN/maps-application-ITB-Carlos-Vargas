@@ -1,5 +1,6 @@
 package com.example.mapsapp.ui.navigation
 
+import com.example.mapsapp.data.Marcador
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.serialization.Serializable
 
@@ -7,7 +8,7 @@ import kotlinx.serialization.Serializable
 object Permisos
 
 @Serializable
-object  Details
+data class  Details(val idMarcador: Int)
 
 @Serializable
 data class CreateMark(val altitud : Double, val longitud:Double)

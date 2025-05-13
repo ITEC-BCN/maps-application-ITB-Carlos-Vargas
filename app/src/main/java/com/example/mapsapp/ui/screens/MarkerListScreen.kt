@@ -1,5 +1,7 @@
 package com.example.mapsapp.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,9 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mapsapp.data.Marcador
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun MarkerListScreen( contentPadding: PaddingValues){
+fun MarkerListScreen( contentPadding: PaddingValues, navigateToNext: (Int) -> Unit){
     val myViewModel = viewModel<SupabaseViewModel>()
     val markList by myViewModel.marcadorList.observeAsState(emptyList<Marcador>())
     myViewModel.getAllMarcadors()
@@ -62,52 +69,33 @@ fun MarkerListScreen( contentPadding: PaddingValues){
             color = Color.White
         )
         LazyColumn(
-            Modifier
-                .fillMaxWidth()
-                .weight(0.6f)
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = contentPadding,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(markList) { student ->
-                val dissmissState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.EndToStart) {
-                            myViewModel.deleteMarcador(student.id!!)
-                            true
-                        } else {
-                            false
-                        }
-                    }
-                )
-                SwipeToDismissBox(state = dissmissState, backgroundContent = {
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(Color.Red)
-                            .padding(horizontal = 20.dp),
-                        contentAlignment = Alignment.BottomEnd
-                    ) {
-                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-                    }
-                }) {
-                    StudentItem(student)
-                }
+            items(markList) { marcador ->
+                    MarcadorItem(marcador, navigateToNext)
             }
         }
     }
 }
 
 @Composable
-fun StudentItem(student: Marcador) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth().background(Color.LightGray).border(width = 2.dp, Color.DarkGray)
-            ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(student.title, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
-            Text(text = "Mark: ${student.descripcion}",  color = Color.White)
+fun MarcadorItem(marcador: Marcador,  navigateToNext: (Int) -> Unit) {
+    Card(
+        border = BorderStroke(2.dp, Color.LightGray), shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.padding(8.dp),
+        onClick = { navigateToNext(marcador.id!!)}
+    ) {
+        Row(modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()) {
+            Image(rememberAsyncImagePainter(marcador.imagen), contentDescription = marcador.title)
+            Text(
+                text = marcador.title,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
