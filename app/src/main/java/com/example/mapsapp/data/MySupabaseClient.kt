@@ -16,8 +16,8 @@ class MySupabaseClient{
 
     lateinit var client: SupabaseClient
     lateinit var storage: Storage
-    private val supabaseUrl = BuildConfig.SUPABASE_URL
-    private val supabaseKey = BuildConfig.SUPABASE_KEY
+    private val supabaseUrl = "https://ojkxutdgimhcdhrpqoxu.supabase.co"
+    private val supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qa3h1dGRnaW1oY2RocnBxb3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5MjA5NzUsImV4cCI6MjA2MTQ5Njk3NX0.Hn7WD_e7f3UhntdJuVVNiV6SjtPw4NGrd8p2isXv2UE"
     constructor(){
         client = createSupabaseClient(
             supabaseUrl = supabaseUrl,
@@ -79,6 +79,19 @@ class MySupabaseClient{
         val imgName = imageName.removePrefix("https://aobflzinjcljzqpxpcxs.supabase.co/storage/v1/object/public/images/")
         client.storage.from("images").delete(imgName)
     }
+
+    suspend fun updateStudent(id : Int, newTitle: String, newDescripcion:String, imageName: String) {
+        client.from("Marcadores").update({
+            set("title", newTitle)
+            set("descripcion", newDescripcion)
+            set("imagen", imageName)
+        }) {
+            filter {
+                eq("id", id)
+            }
+        }
+    }
+
 
 
 }

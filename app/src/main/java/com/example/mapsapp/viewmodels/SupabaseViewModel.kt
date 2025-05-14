@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.mapsapp.MyApp
 import com.example.mapsapp.data.Marcador
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +36,9 @@ class SupabaseViewModel: ViewModel() {
     private val _marcadorDescripcion = MutableLiveData<String>()
     val marcadorDescripcion = _marcadorDescripcion
 
+    private val _marcadorImagen = MutableLiveData<String>()
+    val marcadorImagen = _marcadorImagen
+
     var showAlert = mutableStateOf(false) //indicador de alerta crear mark
 
     private val _showLoading = MutableLiveData<Boolean>(true)
@@ -66,12 +68,17 @@ class SupabaseViewModel: ViewModel() {
         }
     }
 
-    fun updateMarcador(id: Int, title: String, descripcion: String) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateMarcador(id: Int, title: String, descripcion:String, image: Bitmap?){
+        val stream = ByteArrayOutputStream()
+        image?.compress(Bitmap.CompressFormat.PNG, 0, stream)
         CoroutineScope(Dispatchers.IO).launch {
-            database.updateMarcardor(id, title, descripcion)
-            getAllMarcadors()
+            database.deleteImage(_marcadorImagen.value!!)
+            val imageName = database.uploadImage(stream.toByteArray())
+            database.updateStudent(id, title, descripcion,  imageName )
         }
     }
+
 
     fun deleteStudent(id: Int, image: String){
         CoroutineScope(Dispatchers.IO).launch {
@@ -92,6 +99,7 @@ class SupabaseViewModel: ViewModel() {
                     _marcadorAltitud.value = marcador.altitud
                     _marcadorLongitud.value = marcador.longitud
                     _marcadorDescripcion.value = marcador.descripcion
+                    _marcadorImagen.value = marcador.imagen
                     _showLoading.value = false
                 }
             }
