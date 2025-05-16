@@ -11,12 +11,13 @@ import androidx.navigation.compose.composable
 import com.example.mapsapp.ui.screens.MarkerListScreen
 import androidx.navigation.toRoute
 import com.example.mapsapp.ui.navigation.CreateMark
-import com.example.mapsapp.ui.navigation.Destination
+
 import com.example.mapsapp.ui.navigation.Details
 import com.example.mapsapp.ui.screens.CreateMarkerScreen
 import com.example.mapsapp.ui.screens.DetailsMarkScreen
 import com.example.mapsapp.ui.screens.MapScreen
 import com.example.mapsapp.data.Marcador
+import com.example.mapsapp.ui.drawer.Destination
 
 
 @RequiresApi(Build.VERSION_CODES.O)
