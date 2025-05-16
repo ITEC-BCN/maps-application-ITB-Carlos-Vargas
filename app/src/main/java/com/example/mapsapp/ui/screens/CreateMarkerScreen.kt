@@ -42,7 +42,6 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.R
 import com.example.mapsapp.data.Marcador
-import com.example.mapsapp.viewmodels.CreateMarkViewModel
 import com.example.mapsapp.viewmodels.SupabaseViewModel
 import com.google.android.gms.maps.model.LatLng
 
