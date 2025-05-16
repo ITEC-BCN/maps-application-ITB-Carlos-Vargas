@@ -13,12 +13,4 @@ data class  Details(val idMarcador: Int)
 @Serializable
 data class CreateMark(val altitud : Double, val longitud:Double)
 
-sealed class Destination {
 
-    @Serializable
-    object Map: Destination()
-
-    @Serializable
-    object List: Destination()
-
-}

@@ -44,8 +44,6 @@ class SupabaseViewModel: ViewModel() {
     private val _showLoading = MutableLiveData<Boolean>(true)
     val showLoading = _showLoading // indicador de carga marks
 
-    val isFavorito = mutableStateOf(false)
-
     fun getAllMarcadors() {
         CoroutineScope(Dispatchers.IO).launch {
             val marcadores = database.getAllMarcardor()
