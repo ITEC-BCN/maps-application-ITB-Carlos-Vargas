@@ -35,11 +35,15 @@ fun DrawerScreens() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedItemIndex by remember { mutableStateOf(0) }
+    val itemList = listOf(
+        DrawerItem.MAPA,
+        DrawerItem.LISTA
+    )
     ModalNavigationDrawer(
         gesturesEnabled = false,
         drawerContent = {
             ModalDrawerSheet() {
-                DrawerItem.entries.forEachIndexed { index, drawerItem ->
+                itemList.forEachIndexed { index, drawerItem ->
                     NavigationDrawerItem(
                         icon = {Icon(imageVector = drawerItem.icon, contentDescription = drawerItem.text)},
                         label = { Text(text = drawerItem.text) },
