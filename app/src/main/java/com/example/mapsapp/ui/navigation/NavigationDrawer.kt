@@ -1,4 +1,6 @@
+package com.example.mapsapp.ui.navigation
 
+import com.example.mapsapp.ui.drawer.Destination
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -10,14 +12,13 @@ import androidx.navigation.compose.composable
 
 import com.example.mapsapp.ui.screens.MarkerListScreen
 import androidx.navigation.toRoute
-import com.example.mapsapp.ui.navigation.CreateMark
 
-import com.example.mapsapp.ui.navigation.Details
 import com.example.mapsapp.ui.screens.CreateMarkerScreen
 import com.example.mapsapp.ui.screens.DetailsMarkScreen
 import com.example.mapsapp.ui.screens.MapScreen
-import com.example.mapsapp.data.Marcador
-import com.example.mapsapp.ui.drawer.Destination
+
+
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,17 +31,17 @@ fun NavigationDrawer(navController: NavHostController,
             MapScreen(
                 contentPadding,
                 navigateToNext = { altitud, longitud ->
-                navController.navigate(CreateMark(altitud,longitud))
+                navController.navigate(Destination.CreateMark(altitud,longitud))
             })
         }
         composable<Destination.List> {
             MarkerListScreen(contentPadding,
                 navigateToNext = { id ->
-                    navController.navigate(Details(id))
+                    navController.navigate(Destination.Details(id))
                 })
         }
-        composable<CreateMark> { backStrackEntry ->
-            val detall = backStrackEntry.toRoute<CreateMark>()
+        composable<Destination.CreateMark> { backStrackEntry ->
+            val detall = backStrackEntry.toRoute<Destination.CreateMark>()
             CreateMarkerScreen(
                 contentPadding,
                 detall.altitud,
@@ -49,9 +50,9 @@ fun NavigationDrawer(navController: NavHostController,
                     navController.navigate(Destination.Map)
                 })
         }
-        composable<Details> {
+        composable<Destination.Details> {
             backStrackEntry ->
-            val detall = backStrackEntry.toRoute<Details>()
+            val detall = backStrackEntry.toRoute<Destination.Details>()
             DetailsMarkScreen(
                 contentPadding,
                 detall.idMarcador,

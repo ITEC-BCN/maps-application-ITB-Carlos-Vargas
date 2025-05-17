@@ -29,6 +29,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun MapScreen( contentPadding: PaddingValues, navigateToNext: (Double, Double) -> Unit){
+
     val myViewModel = viewModel<SupabaseViewModel>()
     val showDialog = myViewModel.showAlert.value
     val showLoading: Boolean by myViewModel.showLoading.observeAsState(true)

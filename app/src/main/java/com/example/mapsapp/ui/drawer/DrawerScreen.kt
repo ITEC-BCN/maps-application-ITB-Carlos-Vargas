@@ -1,6 +1,7 @@
 package com.example.mapsapp.ui.drawer
 
-import NavigationDrawer
+import com.example.mapsapp.ui.navigation.NavigationDrawer
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 import kotlinx.coroutines.launch
@@ -31,7 +33,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawerScreens() {
-    val navController = rememberNavController()
+    val drawerNavController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedItemIndex by remember { mutableStateOf(0) }
@@ -51,7 +53,7 @@ fun DrawerScreens() {
                         onClick = {
                             selectedItemIndex = index
                             scope.launch { drawerState.close() }
-                            navController.navigate(drawerItem.route)
+                            drawerNavController.navigate(drawerItem.route)
                         }
                     )
                 }
@@ -71,7 +73,7 @@ fun DrawerScreens() {
                 )
             }
         ) { innerPadding ->
-            NavigationDrawer(navController, innerPadding)
+            NavigationDrawer(drawerNavController, innerPadding)
         }
 
     }
