@@ -44,6 +44,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
@@ -87,7 +88,23 @@ fun MarkerListScreen( contentPadding: PaddingValues, navigateToNext: (Int) -> Un
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(markList) { marcador ->
-                    MarcadorItem(marcador, navigateToNext)
+                    val dismissState = rememberSwipeToDismissBoxState()
+                    if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart &&
+                        dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                        LaunchedEffect(Unit) {
+                            myViewModel.deleteStudent(marcador.id!!, marcador.imagen)
+                        }
+                    }
+                    SwipeToDismissBox(state = dismissState, backgroundContent = {
+                        Box(Modifier.fillMaxSize(),contentAlignment = Alignment.BottomEnd) {
+
+                        }
+                    })
+                    {
+                        MarcadorItem(marcador){
+                            navigateToNext(marcador.id!!)
+                        }
+                    }
                 }
             }
         }

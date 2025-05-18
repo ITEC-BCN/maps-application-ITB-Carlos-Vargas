@@ -56,7 +56,7 @@ fun NavigationDrawer(navController: NavHostController,
             DetailsMarkScreen(
                 contentPadding,
                 detall.idMarcador,
-                navigateToNext = {
+                navigateBack = {
                     navController.popBackStack(Destination.List, inclusive = true)
                     navController.navigate(Destination.List)
                 }

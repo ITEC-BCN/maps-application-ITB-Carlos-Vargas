@@ -1,5 +1,6 @@
 package com.example.mapsapp.ui.screens
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -8,8 +9,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,9 +22,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -44,6 +49,7 @@ import com.example.mapsapp.data.Marcador
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -58,202 +64,249 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.R
 import com.example.mapsapp.viewmodels.SupabaseViewModel
 
+@SuppressLint("InvalidColorHexValue")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DetailsMarkScreen(contentPadding: PaddingValues, idMarcador: Int, navigateToNext: () -> Unit){
+fun DetailsMarkScreen(
+    contentPadding: PaddingValues,
+    idMarcador: Int,
+    navigateBack: () -> Unit
+) {
+    val vm: SupabaseViewModel = viewModel()
+    val isLoading: Boolean by vm.showLoading.observeAsState(true)
+    val original: Marcador? by vm.selectedMarcador.observeAsState()
+    val titleState: String? by vm.marcadorTitle.observeAsState("")
+    val descState: String? by vm.marcadorDescripcion.observeAsState("")
+    val imgUrl: String? by vm.marcadorImagen.observeAsState("")
+    val alt: Double? by vm.marcadorAltitud.observeAsState()
+    val lon: Double? by vm.marcadorLongitud.observeAsState()
+    val showDialog = vm.showAlert.value
 
-    val myViewModel = viewModel<SupabaseViewModel>()
-    val showLoading: Boolean by myViewModel.showLoading.observeAsState(true)
+    // Bitmap local al que el usuario cambie la imagen
+    var newBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
-    val title: String? by myViewModel.marcadorTitle.observeAsState("")
-    val descripcion: String? by myViewModel.marcadorDescripcion.observeAsState("")
-    val markImagen: String? by myViewModel.marcadorImagen.observeAsState("")
+    // Cargamos el marcador la primera vez
+    LaunchedEffect(idMarcador) {
+        vm.getMarcador(idMarcador)
+        newBitmap = null
+    }
 
-    val showDialog = myViewModel.showAlert.value
-    val marcador: Marcador? by myViewModel.selectedMarcador.observeAsState()
+    // Detectamos si hay cambios (texto o imagen)
+    val hasChanges = remember(titleState, descState, newBitmap) {
+        original != null && (
+                titleState  != original!!.title ||
+                        descState   != original!!.descripcion ||
+                        newBitmap   != null
+                )
+    }
 
-    var imagenSeleccionada by remember { mutableStateOf<Bitmap?>(null) }
-
-    var alertaCambio by remember { mutableStateOf<Boolean>(false) }
-
-    myViewModel.getMarcador(idMarcador)
-
-    if (showLoading){
-        Column(
-            Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+    if (isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
-    }else{
-        //myViewModel.editMarcadorTitle(marcador!!.title)
-        //myViewModel.editMarcadorDescripcion(marcador!!.descripcion)
-        Card(modifier = Modifier
-            .fillMaxSize().padding(contentPadding),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White))
-        {
-
-
+    }
+    else{
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .padding(16.dp)
+        ) {
+            // Imagen editable
             ImagenBoton(
-                markImagen = markImagen!!,
-                onImageSelected = { bitmap ->
-                    imagenSeleccionada = bitmap
+                markImagen = imgUrl.orEmpty(),
+                onImageSelected = { bmp ->
+                    newBitmap = bmp
                 }
             )
-            Row( verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth())
-            {
 
-
-                TextField(
-                    value = title!!, label = { Text(marcador!!.title) },
-                    onValueChange = {
-                        myViewModel.editMarcadorTitle(it)
-                        if (title != marcador!!.title){
-                            alertaCambio = true
-                        }
-                        else{
-                            alertaCambio = false
-                        }
-                    }
-                )
-
-                Spacer(modifier = Modifier.weight(1f)) // Empuja el botón al final
-
-                IconButton(onClick = {
-                    myViewModel.updateShowAlert(true)
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "Favorito"
-                    )
-                }
-
-            }
+            Spacer(Modifier.height(24.dp))
             TextField(
-                value = descripcion!!, label = { Text(marcador!!.descripcion) },
-                onValueChange = {
-                    myViewModel.editMarcadorDescripcion(it)
-                    if (descripcion != marcador!!.descripcion){
-                        alertaCambio = true
-                    }
-                    else{
-                        alertaCambio = false
-                    }
-                }
+                value = "${alt ?: 0.0} m",
+                onValueChange = {},
+                label = { Text("Altitud") },
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(8.dp)
             )
-            if (alertaCambio || imagenSeleccionada != null){
-                Button(onClick = {
-                    myViewModel.updateMarcador(marcador!!.id!!, title!!, descripcion!!, imagenSeleccionada )
-                }) {
-                    Text(text = "Guardar cambios")
+
+            // Longitud como TextField solo lectura
+            TextField(
+                value = "${lon ?: 0.0}°",
+                onValueChange = {},
+                label = { Text("Longitud") },
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(8.dp)
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            // Título editable
+            TextField(
+                value = titleState.orEmpty(),
+                onValueChange = { vm.editMarcadorTitle(it) },
+                label = { Text("Título") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            // Descripción editable
+            TextField(
+                value = descState.orEmpty(),
+                onValueChange = { vm.editMarcadorDescripcion(it) },
+                label = { Text("Descripción") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                shape = RoundedCornerShape(8.dp)
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            // Botones al pie
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = navigateBack) {
+                    Text("Volver")
                 }
-            }
-        }
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = {  myViewModel.updateShowAlert(false) },
-                text = { Text("¿Desea eliminar este marcador?") },
-                confirmButton = {
-                    TextButton(onClick = {
-                        myViewModel.deleteStudent(marcador!!.id!!, marcador!!.imagen)
-                        myViewModel.updateShowAlert(false)
-                        navigateToNext()
-                    }) {
+                Row {
+                    if (hasChanges) {
+                        Button(onClick = {
+                            original?.id?.let { id ->
+                                vm.updateMarcador(
+                                    id,
+                                    titleState!!,
+                                    descState!!,
+                                    newBitmap  // si es null, la imagen no cambia
+                                )
+                            }
+                        }) {
+                            Text("Guardar cambios")
+                        }
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    TextButton(onClick = { vm.updateShowAlert(true) }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                        Spacer(Modifier.width(4.dp))
                         Text("Eliminar")
                     }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        myViewModel.updateShowAlert(false)
-
-                    }) {
-                        Text("Cancelar")
-                    }
                 }
-            )
+            }
         }
+    }
+
+    // Diálogo de confirmación de borrado
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { vm.updateShowAlert(false) },
+            title = { Text("Confirmar eliminación") },
+            text = { Text("¿Seguro que deseas eliminar este marcador?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    original?.let {
+                        vm.deleteStudent(it.id!!, it.imagen)
+                        vm.updateShowAlert(false)
+                        navigateBack()
+                    }
+                }) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { vm.updateShowAlert(false) }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
+// ----------------------------------
+// Reusa tu composable de selección:
+// ----------------------------------
 @Composable
-fun ImagenBoton(markImagen: String,  onImageSelected: (Bitmap) -> Unit){
+fun ImagenBoton(markImagen: String, onImageSelected: (Bitmap) -> Unit) {
     val context = LocalContext.current
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val imageModifier = Modifier
-        .fillMaxWidth()
-        .height(250.dp)
-        .clip(RoundedCornerShape(16.dp))
-        .clickable { showDialog = true } // Aquí el evento del clic
-
-    val takePictureLauncher =
+    val takeLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && imageUri.value != null) {
-                val stream = context.contentResolver.openInputStream(imageUri.value!!)
-                val bmp = BitmapFactory.decodeStream(stream)
-                bitmap.value = bmp
-                onImageSelected(bmp)
-
+                context.contentResolver.openInputStream(imageUri.value!!)?.use { stream ->
+                    BitmapFactory.decodeStream(stream)?.also {
+                        bitmap.value = it
+                        onImageSelected(it)
+                    }
+                }
             }
         }
 
-    val pickImageLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+    val pickLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
-                imageUri.value = it
-                val stream = context.contentResolver.openInputStream(it)
-                val bmp = BitmapFactory.decodeStream(stream)
-                bitmap.value = bmp
-                onImageSelected(bmp)
+                context.contentResolver.openInputStream(it)?.use { stream ->
+                    BitmapFactory.decodeStream(stream)?.also {
+                        bitmap.value = it
+                        onImageSelected(it)
+                    }
+                }
             }
         }
-    if (bitmap.value == null) {
-        Image(
-            painter = rememberAsyncImagePainter(markImagen),
-            contentDescription = "Example",
-            modifier = imageModifier,
-            alpha = 1f
-        )
 
-    } else {
-        bitmap.value?.let {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(240.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
+            .clickable { showDialog = true },
+        contentAlignment = Alignment.Center
+    ) {
+        if (bitmap.value != null) {
             Image(
-                bitmap = it.asImageBitmap(),
+                bitmap = bitmap.value!!.asImageBitmap(),
                 contentDescription = null,
-                modifier = imageModifier,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            AsyncImage(
+                model = markImagen,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
         }
     }
 
     if (showDialog) {
-
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Selecciona una opción") },
-            text = { Text("¿Quieres tomar una foto o elegir una desde la galería?") },
+            title = { Text("Selecciona opción") },
+            text = { Text("Tomar foto o elegir de galería") },
             confirmButton = {
                 TextButton(onClick = {
                     showDialog = false
-                    val uri = createImageUri(context)
-                    imageUri.value = uri
-                    takePictureLauncher.launch(uri!!)
-                }) {
-                    Text("Tomar Foto")
-                }
+                    imageUri.value = createImageUri(context)
+                    takeLauncher.launch(imageUri.value!!)
+                }) { Text("Tomar foto") }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showDialog = false
-                    pickImageLauncher.launch("image/*")
-                }) {
-                    Text("Elegir de Galería")
-                }
+                    pickLauncher.launch("image/*")
+                }) { Text("Galería") }
             }
         )
     }
