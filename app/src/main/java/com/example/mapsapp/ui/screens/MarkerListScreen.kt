@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -40,7 +42,9 @@ import com.example.mapsapp.data.Marcador
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
 
@@ -48,54 +52,85 @@ import coil.compose.rememberAsyncImagePainter
 fun MarkerListScreen( contentPadding: PaddingValues, navigateToNext: (Int) -> Unit){
     val myViewModel = viewModel<SupabaseViewModel>()
     val markList by myViewModel.marcadorList.observeAsState(emptyList<Marcador>())
+    val showLoading: Boolean by myViewModel.showLoading.observeAsState(true)
     myViewModel.getAllMarcadors()
     val markTitle: String by myViewModel.marcadorTitle.observeAsState("")
     val markDescription: String by myViewModel.marcadorDescripcion.observeAsState("")
 
-
-    Column(
-        Modifier.fillMaxSize().padding(contentPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-
-    ) {
-
-        Text(
-            "Students List",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = Color.White
-        )
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    if (showLoading){
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            items(markList) { marcador ->
+            CircularProgressIndicator()
+        }
+    }
+    else{
+        Column(
+            Modifier.fillMaxSize().padding(contentPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+
+        ) {
+            Text(
+                "Marcadores creados",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White
+            )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(markList) { marcador ->
                     MarcadorItem(marcador, navigateToNext)
+                }
             }
         }
     }
 }
 
 @Composable
-fun MarcadorItem(marcador: Marcador,  navigateToNext: (Int) -> Unit) {
+fun MarcadorItem(marcador: Marcador, navigateToNext: (Int) -> Unit) {
     Card(
-        border = BorderStroke(2.dp, Color.LightGray), shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.padding(8.dp),
-        onClick = { navigateToNext(marcador.id!!)}
+        border = BorderStroke(2.dp, Color.LightGray),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth(),
+        onClick = { navigateToNext(marcador.id!!) }
     ) {
-        Row(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()) {
-            Image(rememberAsyncImagePainter(marcador.imagen), contentDescription = marcador.title)
-            Text(
-                text = marcador.title,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize()
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(marcador.imagen),
+                contentDescription = marcador.title,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray), // Por si no carga la imagen
             )
+
+            Spacer(modifier = Modifier.padding(horizontal = 12.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = marcador.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
     }
 }
