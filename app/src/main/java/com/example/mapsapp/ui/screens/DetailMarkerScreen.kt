@@ -229,10 +229,6 @@ fun DetailsMarkScreen(
         )
     }
 }
-
-// ----------------------------------
-// Reusa tu composable de selección:
-// ----------------------------------
 @Composable
 fun ImagenBoton(markImagen: String, onImageSelected: (Bitmap) -> Unit) {
     val context = LocalContext.current
