@@ -25,7 +25,10 @@ fun NavigationWrapper(){
         composable<Destination.Login> {
             LoginScreen(navigateToMap = {
                 navController.navigate(Destination.Drawer)
-            })
+            },
+                navigateToRegister = {
+                    navController.navigate(Destination.Resgister)
+                })
         }
 
         composable<Destination.Resgister> {
@@ -33,11 +36,19 @@ fun NavigationWrapper(){
                 navController.navigate(Destination.Drawer) {
                     popUpTo(0)
                 }
-            })
+            },
+                navigateToLogin ={
+                    navController.navigate(Destination.Login)
+                } )
         }
 
         composable<Destination.Drawer> {
-            DrawerScreens() // solo este tiene navigation anidada
+            DrawerScreens {
+
+                navController.navigate(Destination.Login) {
+                    popUpTo<Destination.Login> { inclusive = true }
+                }
+            }// solo este tiene navigation anidada
         }
     }
 }

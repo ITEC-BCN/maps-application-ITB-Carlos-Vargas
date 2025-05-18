@@ -31,8 +31,8 @@ class AuthViewModel(private val sharedPreferences: SharedPreferencesHelper) :Vie
             val accessToken = sharedPreferences.getAccessToken()
             val refreshToken = sharedPreferences.getRefreshToken()
             when {
-                !accessToken.isNullOrEmpty() -> refreshToken
-                !refreshToken.isNullOrEmpty() -> refreshToken
+                !accessToken.isNullOrEmpty() -> refreshToken()
+                !refreshToken.isNullOrEmpty() -> refreshToken()
                 else -> _authState.value = AuthState.Unauthenticated
             }
         }
